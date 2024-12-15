@@ -1,5 +1,5 @@
 [package]
-name = "mini-http"
+name = "http-mini"
 version = "0.1.0"
 edition = "2021"
 description = "Mini HTTP server"
