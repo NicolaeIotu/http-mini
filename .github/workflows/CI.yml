@@ -28,8 +28,8 @@ jobs:
     - name: Verify
       run: cargo verify-project
 
-    - name: Test
-      run: cargo test --no-fail-fast
-
     - name: Build
       run: cargo build
+
+    - name: Test
+      run: cargo test --no-fail-fast
