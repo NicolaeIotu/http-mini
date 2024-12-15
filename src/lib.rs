@@ -19,12 +19,12 @@ use utils::http_server;
 /// use std::thread::sleep;
 /// use std::time::Duration;
 ///
-/// extern crate mini_http_lib;
+/// extern crate http_mini_lib;
 ///
 /// fn main() {
 ///     println!("Starting server...");
 ///     let t = thread::spawn(move || {
-///         mini_http_lib::start();
+///         http_mini_lib::start();
 ///     });
 ///
 ///     sleep(Duration::new(1, 0));
