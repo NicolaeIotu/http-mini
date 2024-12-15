@@ -14,6 +14,7 @@ keywords = [
 authors = ["Iotu Nicolae <nicolae.g.iotu@gmail.com>"]
 homepage = "https://github.com/NicolaeIotu/http-mini"
 repository = "https://github.com/NicolaeIotu/http-mini"
+documentation = "https://docs.rs/crate/http-mini/latest"
 categories = ["web-programming::http-server"]
 include = [
     "/Cargo.toml",
@@ -32,8 +33,15 @@ exclude = [
 [dev-dependencies]
 grcov = "0.8.20"
 
+[[bin]]
+name = "http-mini"
+path = "src/main.rs"
+test = true
+doctest = true
+doc = true
+
 [lib]
-name = "mini_http_lib"
+name = "http_mini_lib"
 path = "src/lib.rs"
 test = true
 doctest = true
