@@ -1,8 +1,6 @@
 name: CI
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
@@ -31,7 +29,7 @@ jobs:
       run: cargo verify-project
 
     - name: Test
-      run: ./tasks/test
+      run: cargo test --no-fail-fast
 
     - name: Build
       run: cargo build

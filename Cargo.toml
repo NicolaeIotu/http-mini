@@ -12,6 +12,8 @@ keywords = [
     "mini"
 ]
 authors = ["Iotu Nicolae <nicolae.g.iotu@gmail.com>"]
+homepage = "https://github.com/NicolaeIotu/http-mini"
+repository = "https://github.com/NicolaeIotu/http-mini"
 categories = ["web-programming::http-server"]
 include = [
     "/Cargo.toml",
