@@ -1,5 +1,5 @@
 [package]
-name = "mini-http"
+name = "http-mini"
 version = "0.1.0"
 edition = "2021"
 description = "Mini HTTP server"
@@ -12,6 +12,8 @@ keywords = [
     "mini"
 ]
 authors = ["Iotu Nicolae <nicolae.g.iotu@gmail.com>"]
+repository = "https://github.com/NicolaeIotu/http-mini"
+homepage = "https://github.com/NicolaeIotu/http-mini"
 categories = ["web-programming::http-server"]
 include = [
     "/Cargo.toml",
