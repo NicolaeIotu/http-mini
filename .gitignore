@@ -1,0 +1,14 @@
+/**
+
+!/.github
+!/.github/**
+!/generated
+!/src
+!/src/**
+!/tasks
+!/tasks/**
+!/.gitignore
+!/Cargo.lock
+!/Cargo.toml
+!/LICENSE
+!/README.md

@@ -1,0 +1,12 @@
+#!/bin/sh
+
+rm -rf generated/coverage/data/* generated/coverage/html/*
+export CARGO_INCREMENTAL=0
+export RUSTFLAGS='-Cinstrument-coverage'
+export LLVM_PROFILE_FILE='generated/coverage/data/cargo-test-%p-%m.profraw'
+cargo test --no-fail-fast
+grcov . --binary-path ./target/debug/deps/ -s . -t html \
+  --branch --ignore-not-existing --ignore '../*' --ignore "/*" \
+  --excl-line "grcov-excl-line|^$|#\[|mod |use |^\\W*\/\/|^\\W*\}" \
+  --excl-start "grcov-excl-start" --excl-stop "grcov-excl-stop" \
+  -o ./generated/coverage/html/
