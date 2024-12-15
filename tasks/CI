@@ -1,0 +1,16 @@
+#!/bin/sh
+
+echo "** Checking format ..."
+cargo fmt --check
+
+echo "** Checking code ..."
+cargo clippy --no-deps
+
+echo "** Verifying project ..."
+cargo verify-project
+
+echo "** Testing ..."
+cargo test --no-fail-fast
+
+echo "** Building ..."
+cargo build
