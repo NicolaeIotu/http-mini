@@ -1,6 +1,6 @@
+use std::fs;
 use std::io::{Error, ErrorKind};
-use std::path::{Path, PathBuf};
-use std::{env, fs};
+use std::path::Path;
 
 /// # Validate path
 ///
@@ -11,35 +11,19 @@ pub fn validate_path(path: &Path) -> bool {
     !path.is_symlink() && !path.is_relative()
 }
 
-/// # Retrieve file contents as String
-pub fn get_file_contents(path: &str) -> Result<String, Error> {
+/// # Retrieve file contents
+pub fn get_file_contents(path: &str) -> Result<Vec<u8>, Error> {
     let path_metadata = fs::metadata(path);
     if path_metadata.is_err() {
         return Err(path_metadata.err().unwrap());
     }
 
-    let file_data = fs::read_to_string(path);
+    let file_data = fs::read(path);
     if file_data.is_err() {
         return Err(file_data.err().unwrap());
     }
 
-    Ok(file_data.ok().unwrap().to_string())
-}
-
-/// # Determine application's own parent directory
-pub fn get_app_dir() -> Result<PathBuf, ()> {
-    let current_exe: Result<PathBuf, Error> = env::current_exe();
-    if current_exe.is_err() {
-        return Ok(PathBuf::from("./")); // grcov-excl-line
-    }
-
-    let binding = current_exe.unwrap();
-    let current_parent = binding.parent();
-    if current_parent.is_none() {
-        return Ok(PathBuf::from("./")); // grcov-excl-line
-    }
-
-    Ok(PathBuf::from(current_parent.unwrap().to_str().unwrap()))
+    Ok(file_data.ok().unwrap())
 }
 
 const HTML_TEMPLATE: &str =
@@ -57,14 +41,14 @@ const LISTING_DIR_SLASH: &str = "/";
 
 pub fn get_dir_contents_as_html(
     path: &Path,
-    app_dir: &Path,
+    source_dir: &Path,
     address: &str,
 ) -> Result<String, Error> {
     if !path.is_dir() {
         return Err(Error::new(ErrorKind::NotFound, "Not a directory"));
     }
 
-    if !path.starts_with(app_dir) {
+    if !path.starts_with(source_dir) {
         return Err(Error::new(ErrorKind::NotFound, "Access forbidden"));
     }
 
@@ -88,7 +72,7 @@ pub fn get_dir_contents_as_html(
             .into_os_string()
             .into_string()
             .unwrap()
-            .replace(app_dir.to_str().unwrap(), ".");
+            .replace(source_dir.to_str().unwrap(), ".");
         let entry_server_uri = format!("{}{}", address, entry_display_path.trim_start_matches("."));
 
         result = format!(
@@ -111,22 +95,10 @@ pub fn get_dir_contents_as_html(
             "###TITLE###",
             path.to_str()
                 .unwrap()
-                .replace(app_dir.to_str().unwrap(), ".")
+                .replace(source_dir.to_str().unwrap(), ".")
                 .as_str(),
         )
         .replace("###BODY###", result.as_str());
 
     Ok(result)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_get_app_dir() {
-        let binding = get_app_dir().unwrap();
-        let app_dir = binding.as_path();
-        assert_eq!(app_dir, env::current_exe().unwrap().parent().unwrap());
-    }
 }

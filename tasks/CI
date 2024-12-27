@@ -1,16 +1,36 @@
 #!/bin/sh
 
-echo "** Checking format ..."
-cargo fmt --check
+printf "\n** Checking format ...\n"
+if cargo fmt --check ; then
+  :
+else
+  printf "\033[1;31m%s\033[0m\n" "**! Format error(s)"
+fi
 
-echo "** Checking code ..."
-cargo clippy --no-deps
+printf "\n** Checking code ...\n"
+if cargo clippy --no-deps ; then
+  :
+else
+  printf "\033[1;31m%s\033[0m\n" "**! Coding mistake(s)"
+fi
 
-echo "** Verifying project ..."
-cargo verify-project
+printf "\n** Verifying project ...\n"
+if cargo verify-project ; then
+  :
+else
+  printf "\033[1;31m%s\033[0m\n" "**! Crate manifest error(s)"
+fi
 
-echo "** Building ..."
-cargo build
+printf "\n** Building ...\n"
+if cargo build ; then
+  :
+else
+  printf "\033[1;31m%s\033[0m\n" "**! Build failed"
+fi
 
-echo "** Testing ..."
-cargo test --no-fail-fast
+printf "\n** Testing ...\n"
+if cargo test --no-fail-fast --all-targets -- ./ ; then
+  :
+else
+  printf "\033[1;31m%s\033[0m\n" "**! Test error(s)"
+fi

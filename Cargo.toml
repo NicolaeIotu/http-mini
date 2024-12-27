@@ -1,6 +1,6 @@
 [package]
 name = "http-mini"
-version = "0.1.10"
+version = "0.2.0"
 edition = "2021"
 description = "Mini HTTP server"
 license = "MIT"
@@ -14,7 +14,7 @@ keywords = [
 authors = ["Iotu Nicolae <nicolae.g.iotu@gmail.com>"]
 homepage = "https://github.com/NicolaeIotu/http-mini"
 repository = "https://github.com/NicolaeIotu/http-mini"
-documentation = "https://docs.rs/crate/http-mini/latest"
+documentation = "https://docs.rs/http-mini"
 categories = ["web-programming::http-server"]
 include = [
     "/Cargo.toml",
@@ -22,10 +22,6 @@ include = [
     "/README.md",
     "/src/**",
     "/tasks/**",
-]
-exclude = [
-    "/generated/**",
-    "/target/**",
 ]
 
 [dependencies]

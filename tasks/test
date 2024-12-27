@@ -9,10 +9,10 @@ export RUSTFLAGS
 LLVM_PROFILE_FILE='generated/coverage/data/cargo-test-%p-%m.profraw'
 export LLVM_PROFILE_FILE
 
-cargo test --no-fail-fast
+env TEST=1 cargo test --no-fail-fast -- --nocapture 8080 "::"
 
 grcov . --binary-path ./target/debug/deps/ -s . -t html \
   --branch --ignore-not-existing --ignore '../*' --ignore "/*" \
   --excl-line "grcov-excl-line|^$|#\[|mod |use |^\\W*\/\/|^\\W*\}" \
   --excl-start "grcov-excl-start" --excl-stop "grcov-excl-stop" \
-  -o ./generated/coverage/html/
+  -o ./generated/coverage/

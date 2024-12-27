@@ -30,7 +30,7 @@ pub fn run(address: &str, mut port: i32) -> Result<TcpListener, Error> {
 /// # Main connections handler
 pub fn handle_connection(
     stream: TcpStream,
-    app_dir: &Path,
+    source_dir: &Path,
     executable_name: &OsStr,
     address: &str,
 ) {
@@ -40,7 +40,7 @@ pub fn handle_connection(
             &stream,
             "HTTP/1.1 400 Bad Request",
             None,
-            Option::from(http_request.err().unwrap().to_string()),
+            Option::from(Vec::from(http_request.err().unwrap().to_string())),
         );
         return;
     }
@@ -54,11 +54,11 @@ pub fn handle_connection(
         return;
     }
 
-    let file_path = app_dir.join(request_path.unwrap().trim_start_matches('/'));
+    let file_path = source_dir.join(request_path.unwrap().trim_start_matches('/'));
 
     // list directory contents with usable links
     if file_path.is_dir() {
-        let dir_contents_as_html = get_dir_contents_as_html(&file_path, app_dir, address);
+        let dir_contents_as_html = get_dir_contents_as_html(&file_path, source_dir, address);
         if dir_contents_as_html.is_err() {
             http_response::send(&stream, "HTTP/1.1 500 Internal Server Error", None, None);
             return;
@@ -68,7 +68,7 @@ pub fn handle_connection(
             &stream,
             "HTTP/1.1 200 OK",
             Option::from(vec![("Content-Type".to_string(), "text/html".to_string())]),
-            dir_contents_as_html.ok(),
+            Option::from(Vec::from(dir_contents_as_html.ok().unwrap())),
         );
         return;
     }
@@ -84,12 +84,12 @@ pub fn handle_connection(
             &stream,
             "HTTP/1.1 400 Bad Request",
             None,
-            Option::from(file_contents.err().unwrap().to_string()),
+            Option::from(Vec::from(file_contents.err().unwrap().to_string())),
         );
         return;
     }
 
-    // must not allow to call own executable name i.e. http://localhost:8080/mini-http !!!
+    // Extra protection. Prevent calling own executable i.e. http://localhost:8080/mini-http !!!
     if file_path.file_name().is_none() || file_path.file_name().unwrap() == executable_name {
         http_response::send(&stream, "HTTP/1.1 400 Bad Request", None, None);
         return;
