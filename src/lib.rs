@@ -1,46 +1,30 @@
+mod errors;
 mod traits;
-mod utils;
+pub mod utils;
 
-use crate::utils::{app, fs};
+use crate::utils::app;
 use std::env;
 use std::process::exit;
 use utils::http_server;
 
-/// # Start mini-http server
-///
-/// Example:
+/// # Using http-mini library:
 ///
 /// **File main.rs**
 /// ```
-/// use std::io::Error;
-/// use std::net::TcpListener;
-/// use std::process::exit;
-/// use std::thread;
-/// use std::thread::sleep;
-/// use std::time::Duration;
-///
 /// extern crate http_mini_lib;
 ///
 /// fn main() {
-///     println!("Starting server...");
-///     let t = thread::spawn(move || {
-///         http_mini_lib::start();
-///     });
-///
-///     sleep(Duration::new(1, 0));
-///     drop(t);
+///     http_mini_lib::start();
 /// }
 /// ```
-///
-/// **shell**:
-/// > rustc --extern mini_http=src/external/libmini_http_lib.rlib ./src/main.rs
-///
-/// > main
 // grcov-excl-start
 pub fn start() {
-    let binding = fs::get_app_dir().unwrap();
-    let app_dir = binding.as_path();
-    let (address, port) = app::get_params();
+    let get_params_result = app::get_params();
+    if get_params_result.is_err() {
+        println!("{}", get_params_result.err().unwrap());
+        exit(1);
+    }
+    let (address, port, source_dir) = get_params_result.unwrap();
 
     let executable_path = env::current_exe().unwrap();
     let executable_name = executable_path.file_name().unwrap();
@@ -67,10 +51,33 @@ pub fn start() {
         port
     );
     let link_addr = llv_link_addr.as_str();
+    let source_dir_path = source_dir.as_path();
 
     for stream in listener.incoming() {
         let stream = stream.unwrap();
-        http_server::handle_connection(stream, app_dir, executable_name, link_addr);
+        http_server::handle_connection(stream, source_dir_path, executable_name, link_addr);
     }
 }
 // grcov-excl-stop
+
+#[cfg(test)]
+mod tests {
+    use crate::start;
+    use std::thread;
+    use std::thread::sleep;
+    use std::time::Duration;
+
+    #[test]
+    fn test_start() {
+        let no_panic = true;
+
+        let t = thread::spawn(move || {
+            start();
+        });
+
+        sleep(Duration::new(1, 0));
+        drop(t);
+
+        assert_eq!(no_panic, true);
+    }
+}

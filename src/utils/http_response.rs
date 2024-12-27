@@ -19,14 +19,15 @@ pub fn send(
     mut stream: &TcpStream,
     status_line: &str,
     headers: Option<Vec<(String, String)>>,
-    contents_option: Option<String>,
+    contents_option: Option<Vec<u8>>,
 ) {
-    let contents = contents_option.unwrap_or("".to_string());
+    let contents = contents_option.unwrap_or(Vec::from(""));
     let content_length = contents.len();
     let headers_content = build_headers(headers.unwrap_or_default(), content_length);
 
-    let response = format!("{status_line}{CRLF}{headers_content}{CRLF}{contents}");
+    let response = format!("{status_line}{CRLF}{headers_content}{CRLF}");
 
     stream.write_all(response.as_bytes()).unwrap();
+    stream.write_all(&contents).unwrap();
     stream.flush().unwrap();
 }
